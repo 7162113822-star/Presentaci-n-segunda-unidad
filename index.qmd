@@ -1,0 +1,290 @@
+---
+title: "ANÁLISIS DE DATOS"
+authores: "Cubas, Ramos, Sanchez, Vera, Santillan, 2025"
+format: html
+---
+
+# PASOS PARA ANALIZAR DATOS
+
+1.  Crear mi diseño experimental =\> modelo estadístico
+2.  Colectar los datos
+3.  Importar y verificar los factores.
+4.  Análisis de Variancia (aov() o lm())
+5.  Comparación de medias
+6.  Gráfico
+
+# Librerias
+
+```{r}
+library(tidyverse)
+library(googlesheets4)
+library(Matrix)
+library(lme4)
+library(dplyr)
+library(emmeans)
+library(multcompView)
+library(multcomp)
+library(purrr)
+library(ggplot2)
+library(cowplot)
+library(FactoMineR)
+library(factoextra)
+library(GGally)
+```
+
+# Cargar base de datos
+
+```{r}
+library(readxl)
+fb <- read_excel("C:/Users/hp/Downloads/MAÍZ.xlsx", 
+    sheet = "fb")
+View(fb)
+
+fb <- fb %>% mutate(across(1:3, as.factor))
+str(fb)
+```
+
+# Modelo para la variable n_mazorcas
+
+$$ Número {Mazorcas} = \mu + bloque + riego + dosis + riego*dosis + e$$
+
+# Análisis de varianza
+
+```{r}
+md <- lmer(n_mazorcas ~ riego * dosis + (1 | block), data = fb)
+
+anova(md)
+
+library(car)
+
+Anova(md)
+
+```
+
+# Comparación de medias
+
+-   **Para el riego**
+
+```{r}
+emm_riego <- emmeans(md, ~ riego)
+cld(emm_riego, Letters = letters)
+
+```
+
+-   Gráfico barras con letras de comparación de medias para riego
+
+```{r}
+emm_riego <- emmeans(md, ~ riego)
+letras <- cld(emm_riego, adjust = "tukey", Letters = letters)
+df_letras <- as.data.frame(letras)
+ggplot(df_letras, aes(x = riego, y = emmean)) +
+  geom_col(fill = "skyblue", color = "black") +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  geom_text(aes(label = .group, y = emmean + 0.05), size = 5, fontface = "bold") +
+  labs(x = "Tipo de Riego", y = "Número medio de mazorcas (ajustado)") +
+  theme_minimal() +
+  scale_y_continuous(limits = c(0, 2.0))
+
+```
+
+# Diagrama de cajas
+
+```{r}
+ggplot(fb, aes(x = riego, y = n_mazorcas)) + 
+  geom_boxplot()
+
+
+```
+
+# Modelo para la variable r_total
+
+$$ Rendimiento  {Total} = \mu + bloque + riego + dosis + riego*dosis + e$$
+
+# Análisis de varianza
+
+```{r}
+md1 <- lmer(r_total ~ riego * dosis + (1 | block), data = fb)
+
+anova(md1)
+
+library(car)
+
+Anova(md1)
+
+```
+
+# Comparación de medias
+
+-   **Para riego**
+
+```{r}
+emm_riego1 <- emmeans(md1, ~ riego)
+cld(emm_riego1, Letters = letters)
+
+```
+
+-   Gráfico barras con letras de comparación de medias para riego
+
+```{r}
+emm_riego1 <- emmeans(md1, ~ riego)
+letras <- cld(emm_riego1, adjust = "tukey", Letters = letters)
+df_letras <- as.data.frame(letras)
+ggplot(df_letras, aes(x = riego, y = emmean)) +
+  geom_col(fill = "skyblue", color = "black") +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  geom_text(aes(label = .group, y = emmean + max(emmean)*0.05), size = 5, fontface = "bold") +
+  labs(x = "Tipo de Riego", y = "Rendimiento Total medio (ajustado)") +
+  theme_minimal() +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.5)))
+```
+
+-   **Para dosis**
+
+```{r}
+emm_dosis1 <- emmeans(md1, ~ dosis)
+cld(emm_dosis1, Letters = letters)
+
+```
+
+-   Gráfico barras con letras de comparación de medias para dosis
+
+```{r}
+ggplot(as.data.frame(cld(emm_dosis1, Letters = letters)), aes(x = dosis, y = emmean)) +
+  geom_col(fill = "skyblue", color = "black") +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  geom_text(aes(label = .group, y = emmean + max(emmean) * 0.05), size = 5, fontface = "bold") +
+  labs(x = "Dosis", y = "Rendimiento Total medio (ajustado)") +
+  theme_minimal() +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.5)))
+
+```
+
+# Diagrama de cajas
+
+```{r}
+ggplot(fb, aes(x = riego, y = r_total)) + 
+  geom_boxplot()
+
+```
+
+# Modelo para la variable e_agua
+
+$$ Eficiencia  {Agua} = \mu + bloque + riego + dosis + riego*dosis + e$$
+
+# Análisis de varianza
+
+```{r}
+md2 <- lmer(e_agua ~ riego * dosis + (1 | block), data = fb)
+
+anova(md2)
+
+library(car)
+
+Anova(md2)
+
+```
+
+# Comparación de medias
+
+-   **Para riego**
+
+```{r}
+emm_riego2 <- emmeans(md2, ~ riego)
+cld(emm_riego2, Letters = letters)
+
+```
+
+-   Gráfico barras con letras de comparación de medias para riego
+
+```{r}
+emm_riego2 <- emmeans(md2, ~ riego)
+letras <- cld(emm_riego2, adjust = "tukey", Letters = letters)
+df_letras <- as.data.frame(letras)
+ggplot(df_letras, aes(x = riego, y = emmean)) +
+  geom_col(fill = "skyblue", color = "black") +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  geom_text(aes(label = .group, y = emmean + max(emmean)*0.05), size = 5, fontface = "bold") +
+  labs(x = "Tipo de Riego", y = "Eficiencia Agua media (ajustada)") +
+  theme_minimal() +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.5)))
+
+```
+
+-   **Para dosis**
+
+```{r}
+emm_dosis2 <- emmeans(md2, ~ dosis)
+cld(emm_dosis2, Letters = letters)
+
+```
+
+-   Gráfico barras con letras de comparación de medias para dosis
+
+```{r}
+ggplot(as.data.frame(cld(emm_dosis2, Letters = letters)), aes(x = dosis, y = emmean)) +
+  geom_col(fill = "skyblue", color = "black") +
+  geom_errorbar(aes(ymin = lower.CL, ymax = upper.CL), width = 0.2) +
+  geom_text(aes(label = .group, y = emmean + max(emmean) * 0.05), size = 5, fontface = "bold") +
+  labs(x = "Dosis", y = "Eficiencia Agua media (ajustada)") +
+  theme_minimal() +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.5)))
+
+```
+
+# Diagrama de cajas
+
+```{r}
+ggplot(fb, aes(x = riego, y = e_agua)) + 
+  geom_boxplot()
+
+```
+
+# Análisis multivariado
+
+-   **Gráfico de variables**: Representa cómo las diferentes variables numéricas (n_mazorcas, r_total, e_agua, etc.) contribuyen a los componentes principales. Variables cercanas entre sí están correlacionadas positivamente, mientras que las opuestas están correlacionadas negativamente. Las más alejadas del centro tienen mayor contribución al PCA.
+
+-   **Gráfico de individuos**: Muestra cómo los tratamientos (combinaciones riego × dosis) se distribuyen en el espacio de componentes principales. Tratamientos cercanos tienen respuestas similares en todas las variables medidas, mientras que los alejados tienen perfiles diferentes.
+
+El análisis revela patrones multivariados: qué variables se comportan de forma similar, qué tratamientos producen respuestas equivalentes, y cómo la interacción riego-dosis afecta múltiples variables simultáneamente.
+
+```{r}
+
+dtmv <- fb %>%
+  group_by(riego, dosis) %>%
+  summarise(across(where(is.numeric), ~ mean(., na.rm = TRUE)), .groups = "drop") %>%
+  unite("trat", c(riego, dosis), remove = FALSE) %>%
+  column_to_rownames("trat")
+pca <- PCA(dtmv[,-c(1,2)], scale.unit = TRUE)
+
+var <- plot(pca, choix = "var")
+ind <- plot(pca, choix = "ind")
+
+list(var, ind) %>%
+  plot_grid(plotlist = ., ncol = 2, labels = "auto")
+
+
+```
+
+# Gráfico de correlación de variables cuantitativas
+
+El gráfico de correlación muestra la matriz de correlaciones entre las variables numéricas del estudio (n_mazorcas, r_total, e_agua, etc.).
+
+Cada celda representa el coeficiente de correlación entre dos variables:
+
+-   Valores cercanos a 1: correlación positiva fuerte (mismo color intenso)
+-   Valores cercanos a 0: poca o ninguna correlación (color claro)\
+-   Valajes cercanos a -1: correlación negativa fuerte (color intenso opuesto)
+
+Los colores permiten identificar rápidamente qué variables están relacionadas: - Variables que aumentan o disminuyen juntas tienen correlaciones positivas - Variables con comportamientos opuestos tienen correlaciones negativas
+
+Ayuda a identificar redundancia entre variables y patrones de respuesta conjunto antes de análisis más complejos como PCA.
+
+```{r}
+
+fb %>%
+  dplyr::select(where(is.numeric)) %>%
+  ggcorr(label = TRUE)
+
+```
+
+## GRACIAS
