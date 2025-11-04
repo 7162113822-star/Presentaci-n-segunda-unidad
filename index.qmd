@@ -9,7 +9,7 @@ format: html
 1.  Crear mi diseño experimental =\> modelo estadístico
 2.  Colectar los datos
 3.  Importar y verificar los factores.
-4.  Análisis de Variancia (aov() o lm())
+4.  Análisis de Variancia
 5.  Comparación de medias
 6.  Gráfico
 
@@ -35,8 +35,9 @@ library(GGally)
 # Cargar base de datos
 
 ```{r}
+
 library(readxl)
-fb <- read_excel("C:/Users/hp/Downloads/MAÍZ.xlsx", 
+fb <- read_excel("C:/Users/hp/Downloads/disertacion_maiz.xlsx", 
     sheet = "fb")
 View(fb)
 
@@ -295,7 +296,7 @@ Cada celda representa el coeficiente de correlación entre dos variables:
 
 -   Valores cercanos a 1: correlación positiva fuerte (mismo color intenso)
 -   Valores cercanos a 0: poca o ninguna correlación (color claro)\
--   Valajes cercanos a -1: correlación negativa fuerte (color intenso opuesto)
+-   Valares cercanos a -1: correlación negativa fuerte (color intenso opuesto)
 
 Los colores permiten identificar rápidamente qué variables están relacionadas: - Variables que aumentan o disminuyen juntas tienen correlaciones positivas - Variables con comportamientos opuestos tienen correlaciones negativas
 
