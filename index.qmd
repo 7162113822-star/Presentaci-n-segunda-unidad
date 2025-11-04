@@ -58,7 +58,6 @@ anova(md)
 library(car)
 
 Anova(md)
-
 ```
 
 # Comparación de medias
@@ -87,10 +86,19 @@ ggplot(df_letras, aes(x = riego, y = emmean)) +
 
 ```
 
-# Diagrama de cajas
+# Diagrama de cajas para riego
 
 ```{r}
 ggplot(fb, aes(x = riego, y = n_mazorcas)) + 
+  geom_boxplot()
+
+
+```
+
+# Diagrama de cajas para dosis
+
+```{r}
+ggplot(fb, aes(x = dosis, y = n_mazorcas)) + 
   geom_boxplot()
 
 
@@ -138,6 +146,13 @@ ggplot(df_letras, aes(x = riego, y = emmean)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.5)))
 ```
 
+# Diagrama de cajas para riego
+
+```{r}
+ggplot(fb, aes(x = riego, y = r_total)) + 
+  geom_boxplot()
+
+```
 -   **Para dosis**
 
 ```{r}
@@ -159,10 +174,10 @@ ggplot(as.data.frame(cld(emm_dosis1, Letters = letters)), aes(x = dosis, y = emm
 
 ```
 
-# Diagrama de cajas
+# Diagrama de cajas para dosis
 
 ```{r}
-ggplot(fb, aes(x = riego, y = r_total)) + 
+ggplot(fb, aes(x = dosis, y = r_total)) + 
   geom_boxplot()
 
 ```
@@ -210,6 +225,13 @@ ggplot(df_letras, aes(x = riego, y = emmean)) +
 
 ```
 
+# Diagrama de cajas
+
+```{r}
+ggplot(fb, aes(x = riego, y = e_agua)) + 
+  geom_boxplot()
+
+```
 -   **Para dosis**
 
 ```{r}
@@ -234,7 +256,7 @@ ggplot(as.data.frame(cld(emm_dosis2, Letters = letters)), aes(x = dosis, y = emm
 # Diagrama de cajas
 
 ```{r}
-ggplot(fb, aes(x = riego, y = e_agua)) + 
+ggplot(fb, aes(x = dosis, y = e_agua)) + 
   geom_boxplot()
 
 ```
